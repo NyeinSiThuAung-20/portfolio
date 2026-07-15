@@ -113,6 +113,7 @@ if (projectCarousel) {
   let dragPointerId = null;
   let didDragProject = false;
   let wheelLocked = false;
+  const interactiveProjectElementSelector = "a, button, input, textarea, select, label";
 
   projectCarousel.tabIndex = 0;
 
@@ -187,6 +188,31 @@ if (projectCarousel) {
   };
 
   projectStage?.addEventListener("click", (event) => {
+    const clickedContactLink =
+      event.target instanceof Element ? event.target.closest(".project-card-link[href^='#']") : null;
+
+    if (clickedContactLink instanceof HTMLAnchorElement) {
+      if (didDragProject) {
+        event.preventDefault();
+        didDragProject = false;
+        return;
+      }
+
+      const targetId = clickedContactLink.getAttribute("href");
+      const targetSection = targetId ? document.querySelector(targetId) : null;
+
+      if (targetSection) {
+        event.preventDefault();
+        targetSection.scrollIntoView({
+          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+          block: "start",
+        });
+        window.history.pushState(null, "", targetId);
+      }
+
+      return;
+    }
+
     const clickedCard = getClickedProjectCard(event);
     if (!clickedCard) return;
 
@@ -207,6 +233,7 @@ if (projectCarousel) {
 
   projectStage?.addEventListener("pointerdown", (event) => {
     if (event.button !== 0) return;
+    if (event.target instanceof Element && event.target.closest(interactiveProjectElementSelector)) return;
 
     dragStartX = event.clientX;
     dragPointerId = event.pointerId;
