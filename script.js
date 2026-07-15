@@ -1,5 +1,5 @@
 const mainContent = document.querySelector("main");
-const primarySectionOrder = ["hero", "projects", "skills", "experience", "about", "contact"];
+const primarySectionOrder = ["hero", "skills", "projects", "experience", "about", "contact"];
 
 if (mainContent) {
   primarySectionOrder.forEach((sectionId) => {
